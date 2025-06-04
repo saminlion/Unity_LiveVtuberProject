@@ -1,13 +1,17 @@
 # Unity_LiveVtuberProject
 LiveVtuberProject
 
+🎬 **Demo Video**  
+https://www.youtube.com/watch?v=-pb2VaZuflg
+
+---
+
 # Unity Code-Only Repository
 
 🎯 This repository contains only the **C# script files** from a Unity project. All non-code assets have been excluded to comply with copyright and distribution policies.
 
 
 Only the `.cs` files are included. All asset-related files have been ignored via `.gitignore`.
-
 ---
 
 ## 🚫 Excluded Items
