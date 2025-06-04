@@ -28,8 +28,8 @@ To ensure clean version control and avoid legal/license issues, the following it
 
 The original project uses the following external plugins and SDKs. These are **not included** in this repository and must be downloaded manually:
 
-| Plugin/SDK | Description | Link |
-|------------|-------------|------|
+| Plugin/SDK | Description |
+|------------|-------------|
 | **VRM10 / UniVRM** | VRM model loader for Unity |
 | **Live2D Cubism SDK** | For Live2D animated characters |
 | **lilToon Shader** | Advanced Unity shader |
