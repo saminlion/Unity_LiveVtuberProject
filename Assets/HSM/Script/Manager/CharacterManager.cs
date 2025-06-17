@@ -8,6 +8,9 @@ using UniVRM10;
 public class CharacterManager : MonoBehaviour
 {
     [Header("프리팹 및 위치")]
+    public string live2DBundlePath = "Assets/AssetBundles/live2dmodels";
+    public string[] live2DPrefabNames;
+
     public GameObject[] live2DPrefabs;
     public Transform spawnRoot;              // 생성된 캐릭터를 붙일 부모 (없으면 자기 자신)
     public float spawnOffsetX = -1.0f;        // 유저마다 좌우로 살짝 띄움
@@ -17,6 +20,42 @@ public class CharacterManager : MonoBehaviour
 
     private Dictionary<string, ICharacterController> characterMap = new();
     private int spawnCount = 0;
+
+    void Start()
+    {
+        StartCoroutine(LoadLive2DPrefabsFromBundle());
+    }
+
+    IEnumerator LoadLive2DPrefabsFromBundle()
+    {
+        var bundleLoadRequest = AssetBundle.LoadFromFileAsync(live2DBundlePath);
+        yield return bundleLoadRequest;
+
+        AssetBundle bundle = bundleLoadRequest.assetBundle;
+
+        if (bundle == null)
+        {
+            Debug.LogError("❌ Live2D AssetBundle 로드 실패");
+            yield break;
+        }
+
+        var prefabList = new List<GameObject>();
+        foreach (var name in live2DPrefabNames)
+        {
+            var loadRequest = bundle.LoadAssetAsync<GameObject>(name);
+            yield return loadRequest;
+
+            var prefab = loadRequest.asset as GameObject;
+            if (prefab != null)
+                prefabList.Add(prefab);
+            else
+                Debug.LogWarning($"번들 내 '{name}' 프리팹을 찾을 수 없음");
+        }
+        live2DPrefabs = prefabList.ToArray();
+
+        Debug.Log($"✅ AssetBundle에서 Live2D 프리팹 {live2DPrefabs.Length}개 로드 완료");
+        bundle.Unload(false);
+    }
 
     async public void ApplyUserFaceAndInput(string userId, Dictionary<string, float> parameters, string vrmPath = null)
     {

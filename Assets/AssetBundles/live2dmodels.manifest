@@ -1,0 +1,109 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.32f1
+CRC: 1328727330
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 630b8e70deb21fff75312e1dac4fb5ac
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 8630153ec7d916d850cb52e6d36494fc
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 1b16e3aa242a7eb5431168d3f0341db4
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7e1a8413ad039d7408cc5d00cde529a0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 28e5d11781244f449b6c9aa654a03100, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 308e904e3f33207489a2c15b9b0b297b, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b893d4d32dd60bc4c9a2e447d31c6e88, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7198ae67c7f9bd14b86134e395d11f86, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b26388f83a552b34592994aa9b47c643, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 403ae2dd693bb1d4b924f6b8d206b053, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fb74fc68cdf8b064081daaf145c59b86, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ed02a7b9de37c2044b0bb2e36d490a6c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 096038fb2be401645bb42481542ffef7, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd9e6647bfff7542acb0200ab74bdd1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ab0fd72c2eda39e44a0021ad3a776675, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2101f97e0e368014cba8f91aa17db33a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 6f401bb1c5c52514eba33c0c2ffdc8ff, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 702f05e81266375468e2b47006338cf9, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f718ba9eaf9cd9a48923922e5df94070, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: adeec4ed250bae44d8777078a3ec1e00, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b0d59af3a12d9274982db5c26b991c8d, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8f1ee1adc36a8a04a8d7c42ac5d6bc27, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: e23066d7f6cfa354d91d0033239622a8, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: e9cdc700b37025949b2a748b49be6081, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 6f23db5ace4481b478f0f86b67746813, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9c172444d4638384fb2ba920744553ec, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c1c5b7f06ff29d743b309cb5d27cf48e, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a6f4adbb68873874f8ea675c6a9adca3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 634a4bf59fbb8aa42bdaf044f0107bb3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 58229d41c24a7fb4aafd097ab43bcc2a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dafbb7ec1700e8147a48dbed2e4e543c, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Expression.CubismExpressionData/SerializableExpressionParameter
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Physics.CubismPhysicsInput
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Physics.CubismPhysicsNormalization
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Physics.CubismPhysicsNormalizationTuplet
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Physics.CubismPhysicsOutput
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Physics.CubismPhysicsParticle
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Physics.CubismPhysicsRig
+- AssemblyName: Live2D.Cubism
+  ClassName: Live2D.Cubism.Framework.Physics.CubismPhysicsSubRig
+Assets:
+- Assets/Live2D/Cubism/Samples/Models/Use/chitose/runtime/chitose.prefab
+Dependencies: []

@@ -33,27 +33,10 @@ The original project uses the following external plugins and SDKs. These are **n
 | **VRM10 / UniVRM** | VRM model loader for Unity |
 | **Live2D Cubism SDK** | For Live2D animated characters |
 | **lilToon Shader** | Advanced Unity shader |
-| **Extenject (Zenject)** | Dependency injection framework       |
-| **UniRx**           | Reactive Extensions for Unity (Rx)        |
-| **UniTask**         | Lightweight async/await for Unity         |
 
 > ⚠️ Each plugin must be installed according to its license and usage terms.
 
 ---
-
-## 📦 AssetBundle Support
-This project uses Unity AssetBundle workflow to separate and dynamically load character prefabs and other assets.
-
-All in-game resources (such as Live2D/VRM prefabs) are intended to be distributed separately as AssetBundles.
-
-You must build the required AssetBundles yourself using Unity's AssetBundle pipeline and assign them at runtime.
-
-See the AssetBundleBuilder.cs script in the repository for a sample editor utility.
-
-No asset files are included in this code-only repository; only script files are versioned.
-
----
-
 
 ## ✅ License
 

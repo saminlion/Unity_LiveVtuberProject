@@ -11,10 +11,16 @@ using NativeWebSocket;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using Zenject;
+using UniRx;
+using Cysharp.Threading.Tasks;
 
 public class WebSocketListener : MonoBehaviour
 {
-    private CharacterManager characterManager;
+    [Inject] CharacterManager _characterManager;
+    [Inject] TTSQueue _ttsQueue;
+
+    public Subject<string> OnRawMessage = new Subject<string>();
 
     private WebSocket webSocket;
 
@@ -22,23 +28,32 @@ public class WebSocketListener : MonoBehaviour
     private int reconnectDelayMs = 3000; // 3초
     private bool isReconnecting = false;
 
-    void Awake()
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
-        characterManager = GetComponent<CharacterManager>();
+            Debug.Log("WebSocketListener.Start() _ttsQueue=" + (_ttsQueue == null ? "NULL" : "OK"));
+
+        webSocket = new WebSocket("ws://localhost:8080");
+
+        ConnectWebSocketAsync().Forget();
+
+        OnRawMessage
+            .ObserveOnMainThread()
+            .Subscribe(HandleRawMessage)
+            .AddTo(this);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    async void Start()
+    private async UniTask ConnectWebSocketAsync()
     {
-        webSocket = new WebSocket("ws://localhost:8080");
         RegisterWebSocketEvents();
+        
         await webSocket.Connect();
     }
 
-    System.Collections.IEnumerator DownloadAndPlayAudio(string url, string userId, string text)
+    private async UniTask DownloadAndPlayAudio(string url, string userId, string text)
     {
         using UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.WAV);
-        yield return www.SendWebRequest();
+        await www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
@@ -47,12 +62,14 @@ public class WebSocketListener : MonoBehaviour
         else
         {
             var clip = DownloadHandlerAudioClip.GetContent(www);
-            TTSQueue.Instance.Enqueue(userId, text, clip); // ❗ 여기서 큐에 전달
+
+            _ttsQueue.Enqueue(userId, text, clip); // ❗ 여기서 큐에 전달
+
             Debug.Log("🔊 오디오 큐 등록 완료");
         }
     }
 
-    private async void TryReconnect()
+    private async UniTaskVoid TryReconnect()
     {
         if (isReconnecting || !shouldReconnect) return;
 
@@ -79,10 +96,61 @@ public class WebSocketListener : MonoBehaviour
 
             if (webSocket.State == WebSocketState.Open) break;
 
-            await Task.Delay(reconnectDelayMs);
+            await UniTask.Delay(reconnectDelayMs);
         }
 
         isReconnecting = false;
+    }
+
+    private void HandleRawMessage(string json)
+    {
+        try
+        {
+            var parsed = JObject.Parse(json);
+            Debug.Log($"📩 수신된 메시지 원문:\n{json}");
+
+            var userId = parsed["userId"]?.ToString();
+            var audioUrl = parsed["audioUrl"]?.ToString();
+            var paramObj = parsed["parameters"] as JObject;
+            var vrmPath = parsed["vrmPath"]?.ToString(); // Optional
+
+            if (string.IsNullOrEmpty(userId) || paramObj == null)
+            {
+                Debug.LogWarning("❗ [WS] Invalid data: userId or parameters missing");
+                return;
+            }
+
+            var paramDict = new Dictionary<string, float>();
+            foreach (var pair in paramObj)
+            {
+                if (pair.Key == null || pair.Value == null)
+                    continue;
+
+                var key = pair.Key.Trim();
+                var valueToken = pair.Value;
+
+                if (key.Equals("mouthOpen", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!string.IsNullOrEmpty(audioUrl))
+                    {
+                        string text = parsed["text"]?.ToString() ?? "(no text)";
+                        DownloadAndPlayAudio(audioUrl, userId, text).Forget(); // ✅ userId, text 전달
+                        continue;
+                    }
+                }
+
+                if (float.TryParse(valueToken.ToString(), out var value))
+                {
+                    paramDict[key] = value;
+                }
+            }
+
+            _characterManager.ApplyUserFaceAndInput(userId, paramDict, vrmPath);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("❌ JSON Parse Error: " + ex.Message);
+        }
     }
 
     private void RegisterWebSocketEvents()
@@ -100,66 +168,21 @@ public class WebSocketListener : MonoBehaviour
         webSocket.OnMessage += (bytes) =>
         {
             var json = Encoding.UTF8.GetString(bytes).Trim('\0', ' ', '\n', '\r');
+    Debug.Log("수신된 원문: " + json); // 반드시 출력
 
-            try
-            {
-                var parsed = JObject.Parse(json);
-                //Debug.Log($"📩 수신된 메시지 원문:\n{json}");
-
-                var userId = parsed["userId"]?.ToString();
-                var audioUrl = parsed["audioUrl"]?.ToString();
-                var paramObj = parsed["parameters"] as JObject;
-                var vrmPath = parsed["vrmPath"]?.ToString(); // Optional
-
-                if (string.IsNullOrEmpty(userId) || paramObj == null)
-                {
-                    Debug.LogWarning("❗ [WS] Invalid data: userId or parameters missing");
-                    return;
-                }
-
-                var paramDict = new Dictionary<string, float>();
-                foreach (var pair in paramObj)
-                {
-                    if (pair.Key == null || pair.Value == null)
-                        continue;
-
-                    var key = pair.Key.Trim();
-                    var valueToken = pair.Value;
-
-                    if (key.Equals("mouthOpen", StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (!string.IsNullOrEmpty(audioUrl))
-                        {
-                            string text = parsed["text"]?.ToString() ?? "(no text)";
-                            StartCoroutine(DownloadAndPlayAudio(audioUrl, userId, text)); // ✅ userId, text 전달
-                            continue;
-                        }
-                    }
-
-                    if (float.TryParse(valueToken.ToString(), out var value))
-                    {
-                        paramDict[key] = value;
-                    }
-                }
-
-                characterManager.ApplyUserFaceAndInput(userId, paramDict, vrmPath);
-            }
-            catch (System.Exception ex)
-            {
-                Debug.LogError("❌ JSON Parse Error: " + ex.Message);
-            }
+            OnRawMessage.OnNext(json); // Message to Rx Stream            
         };
 
         webSocket.OnError += (e) =>
         {
             Debug.LogError("WebSocket Error: " + e);
-            TryReconnect();
+            TryReconnect().Forget();
         };
 
         webSocket.OnClose += (e) =>
         {
             Debug.Log("WebSocket Closed: " + e);
-            TryReconnect();
+            TryReconnect().Forget();
         };
     }
 
@@ -174,5 +197,7 @@ public class WebSocketListener : MonoBehaviour
     private async void OnApplicationQuit()
     {
         await webSocket.Close();
+
+        OnRawMessage?.Dispose();
     }
 }
